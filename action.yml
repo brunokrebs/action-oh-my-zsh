@@ -29,18 +29,17 @@ runs:
     - name: Set up SSH user and password
       shell: sh
       run: |
-        sudo useradd -m -s /usr/bin/zsh sshuser
-        echo 'sshuser:password' | sudo chpasswd
+        echo 'runner:password' | sudo chpasswd
 
     - name: Install oh-my-zsh
       shell: sh
       run: |
-        sudo -u sshuser sh -c "cd ~sshuser && curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh"
+        sudo -u runner sh -c "cd /home/runner && curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh"
 
     - name: Generate compaudit list
       shell: sh
       run: |
-        sudo -u sshuser /bin/zsh -c "autoload -Uz compaudit; compaudit" | grep -v 'There are insecure directories:' > /tmp/compaudit_list.txt
+        sudo -u runner /bin/zsh -c "autoload -Uz compaudit; compaudit" | grep -v 'There are insecure directories:' > /tmp/compaudit_list.txt
 
     - name: Fix permissions based on compaudit list
       shell: sh
