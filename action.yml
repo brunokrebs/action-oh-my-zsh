@@ -5,6 +5,11 @@ author: 'Bruno Krebs'
 branding:
   icon: 'terminal'
 
+inputs:
+  ngrok-auth-token:
+    description: 'The Ngrok Auth Token'
+    required: true
+
 runs:
   using: 'composite'
 
@@ -46,7 +51,7 @@ runs:
     - name: Start Ngrok
       shell: sh
       env:
-        NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+        NGROK_AUTH_TOKEN: ${{ inputs.ngrok-auth-token }}
       run: |
         ngrok authtoken $NGROK_AUTH_TOKEN
         ngrok tcp 22 --log=stdout > ngrok.log &
