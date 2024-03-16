@@ -1,0 +1,61 @@
+name: Debugging with Oh My Zsh
+
+description: 'Debug your GitHub Actions Environment interactively by using SSH and Oh My Zsh'
+author: 'Bruno Krebs'
+branding:
+  icon: 'terminal'
+
+runs:
+  using: 'composite'
+
+  steps:
+    - name: Install SSH Server, zsh, and ngrok
+      shell: sh
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y openssh-server zsh
+        wget -q https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz
+        tar -xvzf ngrok-v3-stable-linux-amd64.tgz
+        sudo mv ngrok /usr/local/bin/
+        sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+        sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+        sudo service ssh start
+
+    - name: Set up SSH user and password
+      shell: sh
+      run: |
+        sudo useradd -m -s /usr/bin/zsh sshuser
+        echo 'sshuser:password' | sudo chpasswd
+
+    - name: Install oh-my-zsh
+      shell: sh
+      run: |
+        sudo -u sshuser sh -c "cd ~sshuser && curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh"
+
+    - name: Generate compaudit list
+      shell: sh
+      run: |
+        sudo -u sshuser /bin/zsh -c "autoload -Uz compaudit; compaudit" | grep -v 'There are insecure directories:' > /tmp/compaudit_list.txt
+
+    - name: Fix permissions based on compaudit list
+      shell: sh
+      run: |
+        sudo xargs -a /tmp/compaudit_list.txt chmod g-w
+        sudo xargs -a /tmp/compaudit_list.txt chmod a-w
+
+    - name: Start Ngrok
+      shell: sh
+      env:
+        NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+      run: |
+        ngrok authtoken $NGROK_AUTH_TOKEN
+        ngrok tcp 22 --log=stdout > ngrok.log &
+        sleep 10
+        cat ngrok.log
+        echo "Ngrok tunnel setup complete."
+
+    - name: Keep runner alive
+      shell: sh
+      run: |
+        echo "SSH server is running, and ngrok tunnel is set up. Check the ngrok log output for the tunnel address."
+        tail -f /dev/null
