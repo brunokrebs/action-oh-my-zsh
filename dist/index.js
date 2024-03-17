@@ -25950,7 +25950,10 @@ async function getTunnelsWithTimeout() {
     const requestPromise = httpClient
         .get('http://127.0.0.1:4040/api/tunnels')
         .then(response => response.readBody())
-        .then(body => JSON.parse(body));
+        .then(body => {
+        console.log(body);
+        return JSON.parse(body);
+    });
     return Promise.race([requestPromise, timeoutPromise]);
 }
 
@@ -26016,8 +26019,8 @@ _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n=============================
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Get Ngrok URL');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 const tunnels = await (0,_get_tunnels__WEBPACK_IMPORTED_MODULE_2__/* .getTunnelsWithTimeout */ .R)();
-const url = tunnels[0].public_url;
-_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Ngrok URL: ${url}`);
+// const url = tunnels[0].public_url;
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Ngrok URL: ${tunnels}`);
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } }, 1);
