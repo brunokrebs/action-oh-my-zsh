@@ -26010,7 +26010,7 @@ _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Start Ngrok');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 const ngrokToken = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('ngrok-auth-token');
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(`ngrok authtoken ${ngrokToken}`);
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('ngrok tcp 22 --log=stdout > ngrok.log &');
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('ngrok tcp 22 &');
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('sleep 10');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Get Ngrok URL');
