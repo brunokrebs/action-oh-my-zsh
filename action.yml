@@ -9,6 +9,10 @@ inputs:
   ngrok-auth-token:
     description: 'The Ngrok Auth Token'
     required: true
+  ssh-timeout:
+    description: 'The SSH timeout in seconds'
+    required: false
+    default: "300"
 
 runs:
   using: 'composite'
@@ -60,6 +64,7 @@ runs:
     - name: Start Ngrok and monitor it for SSH connections
       env:
         NGROK_AUTH_TOKEN: ${{ inputs.ngrok-auth-token }}
+        SSH_TIMEOUT: ${{ inputs.ssh-timeout }}
       shell: sh
       run: |
         # Start ngrok and keep it running
@@ -75,7 +80,9 @@ runs:
         # Initialize connection tracking
         LAST_CONNECTION_TIME=$(date +%s)
         POLL_INTERVAL=15 # 15 seconds
-        TIMEOUT=300 # 5 minutes expressed in seconds
+
+        # timeout is $SSH_TIMEOUT or 5 minutes by default
+        TIMEOUT=${SSH_TIMEOUT:-300}
 
         # Monitor the SSH connection
         while : ; do
@@ -85,6 +92,11 @@ runs:
             echo "SSH connection detected. Resetting timeout."
             echo "Connect via SSH using the following URL: $NGROK_URL"
             LAST_CONNECTION_TIME=$(date +%s) # Reset last connection time
+          fi
+
+          # if no connections print time elapsed since last connection
+          if [ "$CONNECTIONS" -eq 0 ]; then
+            echo "No SSH connections detected in the last $((CURRENT_TIME - LAST_CONNECTION_TIME)) seconds."
           fi
 
           # Check if the timeout has been reached
