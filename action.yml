@@ -30,10 +30,13 @@ runs:
         sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
         sudo service ssh start
 
-    - name: Set up SSH user and password
-      shell: sh
+    - name: Set up SSH user with a random password
+      shell: bash
       run: |
-        echo 'runner:password' | sudo chpasswd
+        # Generate a random password
+        PASSWORD=$(openssl rand -base64 20)
+        echo "Generated password for 'runner': $PASSWORD"
+        echo "runner:${PASSWORD}" | sudo chpasswd
 
     - name: Install oh-my-zsh
       shell: sh
