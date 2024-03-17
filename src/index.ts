@@ -29,11 +29,9 @@ await exec('sudo -u runner sh -c "cd /home/runner && curl -fsSL https://raw.gith
 await exec('sudo chsh -s /bin/zsh runner');
 
 core.info('\n====================================');
-core.info('Generate compaudit list and fix permissions')
+core.info('Fix compinit issues')
 core.info('====================================');
-await exec(`sudo -u runner /bin/zsh -c \"autoload -Uz compaudit; compaudit\" | grep -v \"There are insecure directories:\" > /tmp/compaudit_list.txt`);
-await exec('sudo xargs -a /tmp/compaudit_list.txt chmod g-w');
-await exec('sudo xargs -a /tmp/compaudit_list.txt chmod a-w');
+await exec('../bin/fix-compinit.sh');
 
 core.info('\n====================================');
 core.info('Append env_setup.sh to .zshrc')

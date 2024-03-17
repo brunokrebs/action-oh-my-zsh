@@ -25996,11 +25996,9 @@ _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('===============================
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('sudo -u runner sh -c "cd /home/runner && curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh"');
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('sudo chsh -s /bin/zsh runner');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
-_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Generate compaudit list and fix permissions');
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Fix compinit issues');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(`sudo -u runner /bin/zsh -c \"autoload -Uz compaudit; compaudit\" | grep -v \"There are insecure directories:\" > /tmp/compaudit_list.txt`);
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('sudo xargs -a /tmp/compaudit_list.txt chmod g-w');
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('sudo xargs -a /tmp/compaudit_list.txt chmod a-w');
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('../bin/fix-compinit.sh');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Append env_setup.sh to .zshrc');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
