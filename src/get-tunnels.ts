@@ -8,10 +8,7 @@ export async function getTunnelsWithTimeout() {
   const requestPromise = httpClient
     .get('http://127.0.0.1:4040/api/tunnels')
     .then(response => response.readBody())
-    .then(body => {
-      console.log(body);
-      return JSON.parse(body);
-    });
+    .then(body => JSON.parse(body));
   
   return Promise.race([requestPromise, timeoutPromise]);
 }

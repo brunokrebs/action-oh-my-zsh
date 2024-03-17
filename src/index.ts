@@ -18,9 +18,9 @@ await exec('sudo service ssh start');
 core.info('\n====================================');
 core.info('Generate random password and set as runner password');
 core.info('====================================');
-const password = nanoid();
-await exec(`echo "runner:${password}" | sudo chpasswd`);
-core.info(`Runner password: ${password}`);
+// const password = nanoid();
+await exec(`echo "runner:brunooo" | sudo chpasswd`);
+core.info(`Runner password: brunooo`);
 
 core.info('\n====================================');
 core.info('Install oh-my-zsh and set ZSH as default shell for runner');
@@ -52,5 +52,5 @@ core.info('\n====================================');
 core.info('Get Ngrok URL')
 core.info('====================================');
 const tunnelsResponse = await getTunnelsWithTimeout();
-const url = tunnelsResponse[0]?.public_url;
-core.info(`Ngrok URL (${url}): ${JSON.stringify(tunnelsResponse.tunnels)}`);
+const url = tunnelsResponse.tunnels[0]?.public_url;
+core.info(`Ngrok URL: ${url}`);

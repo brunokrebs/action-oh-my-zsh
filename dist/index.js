@@ -25950,10 +25950,7 @@ async function getTunnelsWithTimeout() {
     const requestPromise = httpClient
         .get('http://127.0.0.1:4040/api/tunnels')
         .then(response => response.readBody())
-        .then(body => {
-        console.log(body);
-        return JSON.parse(body);
-    });
+        .then(body => JSON.parse(body));
     return Promise.race([requestPromise, timeoutPromise]);
 }
 
@@ -25970,12 +25967,10 @@ __nccwpck_require__.r(__webpack_exports__);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(1514);
 /* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_exec__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(7852);
 /* harmony import */ var _get_tunnels__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(1385);
 var _a;
 
 // import github from '@actions/github';
-
 
 
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
@@ -25991,9 +25986,9 @@ await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('sudo service ssh star
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Generate random password and set as runner password');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
-const password = (0,nanoid__WEBPACK_IMPORTED_MODULE_3__/* .nanoid */ .x0)();
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(`echo "runner:${password}" | sudo chpasswd`);
-_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Runner password: ${password}`);
+// const password = nanoid();
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(`echo "runner:brunooo" | sudo chpasswd`);
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Runner password: brunooo`);
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Install oh-my-zsh and set ZSH as default shell for runner');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
@@ -26020,8 +26015,8 @@ _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n=============================
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Get Ngrok URL');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 const tunnelsResponse = await (0,_get_tunnels__WEBPACK_IMPORTED_MODULE_2__/* .getTunnelsWithTimeout */ .R)();
-const url = (_a = tunnelsResponse[0]) === null || _a === void 0 ? void 0 : _a.public_url;
-_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Ngrok URL (${url}): ${JSON.stringify(tunnelsResponse.tunnels)}`);
+const url = (_a = tunnelsResponse.tunnels[0]) === null || _a === void 0 ? void 0 : _a.public_url;
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Ngrok URL: ${url}`);
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } }, 1);
@@ -27889,75 +27884,6 @@ function parseParams (str) {
 }
 
 module.exports = parseParams
-
-
-/***/ }),
-
-/***/ 7852:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
-
-"use strict";
-
-// EXPORTS
-__nccwpck_require__.d(__webpack_exports__, {
-  "x0": () => (/* binding */ nanoid)
-});
-
-// UNUSED EXPORTS: customAlphabet, customRandom, random, urlAlphabet
-
-;// CONCATENATED MODULE: external "node:crypto"
-const external_node_crypto_namespaceObject = require("node:crypto");
-;// CONCATENATED MODULE: ./node_modules/nanoid/url-alphabet/index.js
-const urlAlphabet =
-  'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
-
-;// CONCATENATED MODULE: ./node_modules/nanoid/index.js
-
-
-
-const POOL_SIZE_MULTIPLIER = 128
-let pool, poolOffset
-function fillPool(bytes) {
-  if (!pool || pool.length < bytes) {
-    pool = Buffer.allocUnsafe(bytes * POOL_SIZE_MULTIPLIER)
-    external_node_crypto_namespaceObject.webcrypto.getRandomValues(pool)
-    poolOffset = 0
-  } else if (poolOffset + bytes > pool.length) {
-    external_node_crypto_namespaceObject.webcrypto.getRandomValues(pool)
-    poolOffset = 0
-  }
-  poolOffset += bytes
-}
-function random(bytes) {
-  fillPool((bytes -= 0))
-  return pool.subarray(poolOffset - bytes, poolOffset)
-}
-function customRandom(alphabet, defaultSize, getRandom) {
-  let mask = (2 << (31 - Math.clz32((alphabet.length - 1) | 1))) - 1
-  let step = Math.ceil((1.6 * mask * defaultSize) / alphabet.length)
-  return (size = defaultSize) => {
-    let id = ''
-    while (true) {
-      let bytes = getRandom(step)
-      let i = step
-      while (i--) {
-        id += alphabet[bytes[i] & mask] || ''
-        if (id.length === size) return id
-      }
-    }
-  }
-}
-function customAlphabet(alphabet, size = 21) {
-  return customRandom(alphabet, size, random)
-}
-function nanoid(size = 21) {
-  fillPool((size -= 0))
-  let id = ''
-  for (let i = poolOffset - size; i < poolOffset; i++) {
-    id += urlAlphabet[pool[i] & 63]
-  }
-  return id
-}
 
 
 /***/ })
