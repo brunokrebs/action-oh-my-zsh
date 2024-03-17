@@ -30486,11 +30486,10 @@ const tunnelsResponse = await (0,_get_tunnels__WEBPACK_IMPORTED_MODULE_6__/* .ge
 const url = (_a = tunnelsResponse.tunnels[0]) === null || _a === void 0 ? void 0 : _a.public_url;
 const ipAddress = url === null || url === void 0 ? void 0 : url.replace('tcp://', '').split(':')[0];
 const port = url === null || url === void 0 ? void 0 : url.replace('tcp://', '').split(':')[1];
-_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Connect with: ssh runner@${ipAddress} -p ${port}`);
-const timeout = parseInt(_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('ssh-timeout'), 10) * 1000;
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Monitor the SSH connection');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
+const timeout = parseInt(_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('ssh-timeout'), 10) * 1000;
 let lastConnectionTime = Date.now();
 while (true) {
     const openConnections = await (0,_get_open_connections__WEBPACK_IMPORTED_MODULE_7__/* .getOpenConnections */ .$)();
@@ -30503,6 +30502,7 @@ while (true) {
             _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(`No open SSH connections in the last ${timeout / 1000} seconds. Exiting...`);
             process.exit(1);
         }
+        _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`No open SSH connections in the last ${timeout / 1000} seconds`);
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Connect with: ssh runner@${ipAddress} -p ${port}`);
     }
     await new Promise(resolve => setTimeout(resolve, 15000));

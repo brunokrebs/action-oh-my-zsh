@@ -98,13 +98,11 @@ const tunnelsResponse = await getTunnelsWithTimeout();
 const url = tunnelsResponse.tunnels[0]?.public_url;
 const ipAddress = url?.replace('tcp://', '').split(':')[0];
 const port = url?.replace('tcp://', '').split(':')[1];
-core.info(`Connect with: ssh runner@${ipAddress} -p ${port}`);
 
-const timeout = parseInt(core.getInput('ssh-timeout'), 10) * 1000;
 core.info('====================================');
 core.info('Monitor the SSH connection')
 core.info('====================================');
-
+const timeout = parseInt(core.getInput('ssh-timeout'), 10) * 1000;
 let lastConnectionTime = Date.now();
 while (true) {
   const openConnections = await getOpenConnections();
@@ -116,6 +114,7 @@ while (true) {
       core.setFailed(`No open SSH connections in the last ${timeout / 1000} seconds. Exiting...`);
       process.exit(1);
     }
+    core.info(`No open SSH connections in the last ${timeout / 1000} seconds`);
     core.info(`Connect with: ssh runner@${ipAddress} -p ${port}`);
   }
   await new Promise(resolve => setTimeout(resolve, 15000));
