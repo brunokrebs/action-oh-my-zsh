@@ -30314,6 +30314,38 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 1751:
+/***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
+
+"use strict";
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   "$": () => (/* binding */ getOpenConnections)
+/* harmony export */ });
+/* harmony import */ var _actions_http_client__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(6255);
+/* harmony import */ var _actions_http_client__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_http_client__WEBPACK_IMPORTED_MODULE_0__);
+
+async function getOpenConnections() {
+    const httpClient = new _actions_http_client__WEBPACK_IMPORTED_MODULE_0__.HttpClient();
+    const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Request timed out')), 10000);
+    });
+    const requestPromise = httpClient
+        .get('http://127.0.0.1:4040/api/tunnels')
+        .then(response => response.readBody())
+        .then(body => JSON.parse(body))
+        .then(({ tunnels }) => {
+        const sshTunnel = tunnels.find((tunnel) => tunnel.proto === 'tcp' && tunnel.config.addr === 'localhost:22');
+        if (!sshTunnel) {
+            throw new Error('No open SSH tunnel found');
+        }
+        return sshTunnel.metrics.conns.gauge;
+    });
+    return Promise.race([requestPromise, timeoutPromise]);
+}
+
+
+/***/ }),
+
 /***/ 1385:
 /***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
 
@@ -30353,14 +30385,15 @@ __nccwpck_require__.r(__webpack_exports__);
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(path__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var os__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(2037);
 /* harmony import */ var os__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__nccwpck_require__.n(os__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _octokit_rest__WEBPACK_IMPORTED_MODULE_7__ = __nccwpck_require__(5375);
-/* harmony import */ var _octokit_rest__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__nccwpck_require__.n(_octokit_rest__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _octokit_rest__WEBPACK_IMPORTED_MODULE_8__ = __nccwpck_require__(5375);
+/* harmony import */ var _octokit_rest__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__nccwpck_require__.n(_octokit_rest__WEBPACK_IMPORTED_MODULE_8__);
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(5438);
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(1514);
 /* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__nccwpck_require__.n(_actions_exec__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _octokit_auth_action__WEBPACK_IMPORTED_MODULE_8__ = __nccwpck_require__(9205);
+/* harmony import */ var _octokit_auth_action__WEBPACK_IMPORTED_MODULE_9__ = __nccwpck_require__(9205);
 /* harmony import */ var _get_tunnels__WEBPACK_IMPORTED_MODULE_6__ = __nccwpck_require__(1385);
+/* harmony import */ var _get_open_connections__WEBPACK_IMPORTED_MODULE_7__ = __nccwpck_require__(1751);
 var _a;
 
 
@@ -30371,7 +30404,8 @@ var _a;
 
 
 
-_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
+
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Install openssh-server and zsh');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('sudo apt-get update');
@@ -30381,14 +30415,14 @@ await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('tar -xvzf ngrok-v3-st
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('sudo mv ngrok /usr/local/bin/');
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)(`echo "PasswordAuthentication yes" | sudo tee -a /etc/ssh/sshd_config`);
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('sudo service ssh start');
-_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Configure ssh');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('sudo -u runner mkdir -p /home/runner/.ssh');
 const sshPath = path__WEBPACK_IMPORTED_MODULE_2__.join(os__WEBPACK_IMPORTED_MODULE_3__.homedir(), ".ssh");
 fs__WEBPACK_IMPORTED_MODULE_1__.appendFileSync(path__WEBPACK_IMPORTED_MODULE_2__.join(sshPath, "config"), "Host *\nStrictHostKeyChecking no\nCheckHostIP no\n" +
     "TCPKeepAlive yes\nServerAliveInterval 30\nServerAliveCountMax 180\nVerifyHostKeyDNS yes\nUpdateHostKeys yes\n");
-_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Add authorized keys');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 const allowedUsers = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('allowed-github-users') ? _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('allowed-github-users').split(',') : [];
@@ -30401,8 +30435,8 @@ if (!uniqueAllowedUsers.length) {
     process.exit(1);
 }
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Allowed users: ${uniqueAllowedUsers.join(',')}`);
-const octokit = new _octokit_rest__WEBPACK_IMPORTED_MODULE_7__.Octokit({
-    authStrategy: _octokit_auth_action__WEBPACK_IMPORTED_MODULE_8__/* .createActionAuth */ .C
+const octokit = new _octokit_rest__WEBPACK_IMPORTED_MODULE_8__.Octokit({
+    authStrategy: _octokit_auth_action__WEBPACK_IMPORTED_MODULE_9__/* .createActionAuth */ .C
 });
 const allowedKeys = [];
 for (const allowedUser of uniqueAllowedUsers) {
@@ -30423,34 +30457,56 @@ for (const allowedUser of uniqueAllowedUsers) {
 const authorizedKeysPath = path__WEBPACK_IMPORTED_MODULE_2__.join(sshPath, "authorized_keys");
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Allowed keys: ${allowedKeys.join(',')}`);
 fs__WEBPACK_IMPORTED_MODULE_1__.appendFileSync(authorizedKeysPath, allowedKeys.join('\n'));
-_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Install oh-my-zsh and set ZSH as default shell for runner');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('sudo -u runner sh -c "cd /home/runner && curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh"');
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('sudo chsh -s /bin/zsh runner');
-_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Fix compinit issues');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('wget -q https://raw.githubusercontent.com/brunokrebs/action-oh-my-zsh/main/bin/fix-compinit.sh');
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('chmod +x fix-compinit.sh');
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('./fix-compinit.sh');
-_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Append env_setup.sh to .zshrc');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 fs__WEBPACK_IMPORTED_MODULE_1__.appendFileSync('/home/runner/.zshrc', 'source /home/runner/env_setup.sh');
-_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Start Ngrok');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 const ngrokToken = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('ngrok-auth-token');
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)(`ngrok authtoken ${ngrokToken}`);
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('/bin/bash', ['-c', 'ngrok tcp 22 &']);
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('sleep 10');
-_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Get Ngrok URL');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 const tunnelsResponse = await (0,_get_tunnels__WEBPACK_IMPORTED_MODULE_6__/* .getTunnelsWithTimeout */ .R)();
 const url = (_a = tunnelsResponse.tunnels[0]) === null || _a === void 0 ? void 0 : _a.public_url;
-_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Ngrok URL: ${url}`);
+const ipAddress = url === null || url === void 0 ? void 0 : url.replace('tcp://', '').split(':')[0];
+const port = url === null || url === void 0 ? void 0 : url.replace('tcp://', '').split(':')[1];
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Connect with: ssh runner@${ipAddress} -p ${port}`);
+const timeout = parseInt(_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('ssh-timeout'), 10) * 1000;
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Monitor the SSH connection');
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
+let lastConnectionTime = Date.now();
+while (true) {
+    const openConnections = await (0,_get_open_connections__WEBPACK_IMPORTED_MODULE_7__/* .getOpenConnections */ .$)();
+    if (openConnections > 0) {
+        lastConnectionTime = Date.now();
+        _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Open SSH connections: ${openConnections}`);
+        await new Promise(resolve => setTimeout(resolve, 10000));
+    }
+    else {
+        if (Date.now() - lastConnectionTime > timeout) {
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(`No open SSH connections in the last ${timeout / 1000} seconds. Exiting...`);
+            process.exit(1);
+        }
+        _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Connect with: ssh runner@${ipAddress} -p ${port}`);
+    }
+}
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } }, 1);
