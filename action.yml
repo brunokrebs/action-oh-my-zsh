@@ -58,11 +58,13 @@ runs:
         echo "source /home/runner/env_setup.sh" | sudo tee -a /home/runner/.zshrc
 
     - name: Start Ngrok and monitor it for SSH connections
+      env:
+        NGROK_AUTH_TOKEN: ${{ inputs.ngrok-auth-token }}
       shell: sh
       run: |
         # Start ngrok and keep it running
         ngrok authtoken $NGROK_AUTH_TOKEN
-        ./ngrok tcp 22 &
+        ngrok tcp 22 --log=stdout > ngrok.log &
 
         # Get the public URL
         NGROK_URL=$(curl --silent --max-time 10 http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
