@@ -25982,6 +25982,7 @@ await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('sudo apt-get install 
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('wget -q https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz');
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('tar -xvzf ngrok-v3-stable-linux-amd64.tgz');
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('sudo mv ngrok /usr/local/bin/');
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(`echo "PasswordAuthentication yes" | sudo tee -a /etc/ssh/sshd_config`);
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('sudo service ssh start');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Generate random password and set as runner password');
