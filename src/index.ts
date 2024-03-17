@@ -110,12 +110,13 @@ while (true) {
     lastConnectionTime = Date.now();
     core.info(`Open SSH connections: ${openConnections}`);
   } else {
-    if (Date.now() - lastConnectionTime > timeout) {
-      core.setFailed(`No open SSH connections in the last ${timeout / 1000} seconds. Exiting...`);
+    const timeSinceLastConnection = Date.now() - lastConnectionTime;
+    if (timeSinceLastConnection > timeout) {
+      core.setFailed(`No open SSH connections in the last ${timeSinceLastConnection / 1000} seconds. Exiting...`);
       process.exit(1);
     }
-    core.info(`No open SSH connections in the last ${timeout / 1000} seconds`);
+    core.info(`No open SSH connections in the last ${timeSinceLastConnection / 1000} seconds`);
     core.info(`Connect with: ssh runner@${ipAddress} -p ${port}`);
   }
-  await new Promise(resolve => setTimeout(resolve, 15000));
+  await new Promise(resolve => setTimeout(resolve, 5000));
 }

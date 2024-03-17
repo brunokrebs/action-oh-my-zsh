@@ -30498,14 +30498,15 @@ while (true) {
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Open SSH connections: ${openConnections}`);
     }
     else {
-        if (Date.now() - lastConnectionTime > timeout) {
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(`No open SSH connections in the last ${timeout / 1000} seconds. Exiting...`);
+        const timeSinceLastConnection = Date.now() - lastConnectionTime;
+        if (timeSinceLastConnection > timeout) {
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(`No open SSH connections in the last ${timeSinceLastConnection / 1000} seconds. Exiting...`);
             process.exit(1);
         }
-        _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`No open SSH connections in the last ${timeout / 1000} seconds`);
+        _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`No open SSH connections in the last ${timeSinceLastConnection / 1000} seconds`);
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Connect with: ssh runner@${ipAddress} -p ${port}`);
     }
-    await new Promise(resolve => setTimeout(resolve, 15000));
+    await new Promise(resolve => setTimeout(resolve, 5000));
 }
 
 __webpack_async_result__();
