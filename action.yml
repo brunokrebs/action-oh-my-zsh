@@ -90,19 +90,19 @@ runs:
           CONNECTIONS=$(curl --silent http://127.0.0.1:4040/api/tunnels | jq '.tunnels[0].metrics.conns.gauge')
           if [ "$CONNECTIONS" -gt 0 ]; then
             echo "SSH connection detected. Resetting timeout."
-            echo "Connect via SSH using the following URL: $NGROK_URL"
             LAST_CONNECTION_TIME=$(date +%s) # Reset last connection time
           fi
 
           # if no connections print time elapsed since last connection
           if [ "$CONNECTIONS" -eq 0 ]; then
+            echo "Connect via SSH using the following URL: $NGROK_URL"
             echo "No SSH connections detected in the last $((CURRENT_TIME - LAST_CONNECTION_TIME)) seconds."
           fi
 
           # Check if the timeout has been reached
           if [ $((CURRENT_TIME - LAST_CONNECTION_TIME)) -ge $TIMEOUT ]; then
-            echo "No SSH connections detected within the last 5 minutes. Terminating."
-            exit 1
+            echo "No SSH connections detected within the last $TIMEOUT seconds. Exiting."
+            exit 0
           fi
 
           sleep $POLL_INTERVAL
