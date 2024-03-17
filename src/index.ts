@@ -36,6 +36,7 @@ if (!uniqueAllowedUsers.length) {
   core.setFailed('No allowed users');
   process.exit(1);
 }
+core.info(`Allowed users: ${uniqueAllowedUsers.join(',')}`);
 
 const octokit = new Octokit({
   authStrategy: createActionAuth
@@ -60,6 +61,7 @@ const authorizedKeysPath = path.join(sshPath, "authorized_keys");
 // allowedKeys.push('ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA5d394VrHgy/1gxJOMfwAEE/Kgq2oCnFcYMDScqVOdg bruno@mimic.com');
 // allowedKeys.push('ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBWH6PAr+9Dx65JR6BLeGoU762FcrUktYpFCphBQ/ted krebs.bruno@gmail.com');
 
+core.info(`Allowed keys: ${allowedKeys.join(',')}`);
 fs.appendFileSync(authorizedKeysPath, allowedKeys.join('\n'));
 
 core.info('\n====================================');

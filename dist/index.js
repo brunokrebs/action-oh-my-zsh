@@ -30143,6 +30143,7 @@ if (!uniqueAllowedUsers.length) {
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed('No allowed users');
     process.exit(1);
 }
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Allowed users: ${uniqueAllowedUsers.join(',')}`);
 const octokit = new _octokit_rest__WEBPACK_IMPORTED_MODULE_6__.Octokit({
     authStrategy: _octokit_auth_action__WEBPACK_IMPORTED_MODULE_7__/* .createActionAuth */ .C
 });
@@ -30165,6 +30166,7 @@ for (const allowedUser of uniqueAllowedUsers) {
 const authorizedKeysPath = path__WEBPACK_IMPORTED_MODULE_2__.join(sshPath, "authorized_keys");
 // allowedKeys.push('ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA5d394VrHgy/1gxJOMfwAEE/Kgq2oCnFcYMDScqVOdg bruno@mimic.com');
 // allowedKeys.push('ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBWH6PAr+9Dx65JR6BLeGoU762FcrUktYpFCphBQ/ted krebs.bruno@gmail.com');
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Allowed keys: ${allowedKeys.join(',')}`);
 fs__WEBPACK_IMPORTED_MODULE_1__.appendFileSync(authorizedKeysPath, allowedKeys.join('\n'));
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Install oh-my-zsh and set ZSH as default shell for runner');
