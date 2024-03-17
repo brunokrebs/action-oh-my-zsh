@@ -30497,7 +30497,6 @@ while (true) {
     if (openConnections > 0) {
         lastConnectionTime = Date.now();
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Open SSH connections: ${openConnections}`);
-        await new Promise(resolve => setTimeout(resolve, 10000));
     }
     else {
         if (Date.now() - lastConnectionTime > timeout) {
@@ -30506,6 +30505,7 @@ while (true) {
         }
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Connect with: ssh runner@${ipAddress} -p ${port}`);
     }
+    await new Promise(resolve => setTimeout(resolve, 15000));
 }
 
 __webpack_async_result__();
