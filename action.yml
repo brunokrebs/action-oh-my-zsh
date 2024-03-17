@@ -35,7 +35,10 @@ runs:
       run: |
         # Generate a random password
         PASSWORD=$(openssl rand -base64 20)
-        echo "Generated password for 'runner': $PASSWORD"
+        echo "Generated password for 'runner':"
+        echo "-================================-"
+        echo $PASSWORD
+        echo "-================================-"
         echo "runner:${PASSWORD}" | sudo chpasswd
 
     - name: Install oh-my-zsh
@@ -102,7 +105,7 @@ runs:
             echo "runner's password is: $PASSWORD"
             echo "Connect via SSH using the following command:"
             # output ssh command on the `ssh runner@2.tcp.ngrok.io -p 13522` pattern
-            echo "ssh runner@$(echo $NGROK_URL | awk -F'://' '{print $2}' | awk -F'/' '{print $1}') -p $(echo $NGROK_URL | awk -F':' '{print $3}')"
+            echo "ssh runner@$(echo $NGROK_URL | awk -F'://' '{print $2}' | awk -F':' '{print $1}') -p $(echo $NGROK_URL | awk -F':' '{print $NF}')"
           fi
 
           # Check if the timeout has been reached
