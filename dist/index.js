@@ -25998,7 +25998,7 @@ await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('sudo chsh -s /bin/zsh
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Generate compaudit list and fix permissions');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(`sudo -u runner /bin/zsh -c "autoload -Uz compaudit; compaudit" | grep -v "There are insecure directories:" > /tmp/compaudit_list.txt`);
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(`sudo -u runner /bin/zsh -c \"autoload -Uz compaudit; compaudit\" | grep -v \"There are insecure directories:\" > /tmp/compaudit_list.txt`);
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('sudo xargs -a /tmp/compaudit_list.txt chmod g-w');
 await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('sudo xargs -a /tmp/compaudit_list.txt chmod a-w');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
