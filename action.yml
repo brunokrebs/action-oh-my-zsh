@@ -65,6 +65,8 @@ runs:
         # Start ngrok and keep it running
         ngrok authtoken $NGROK_AUTH_TOKEN
         ngrok tcp 22 --log=stdout > ngrok.log &
+        sleep 10
+        cat ngrok.log
 
         # Get the public URL
         NGROK_URL=$(curl --silent --max-time 10 http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
@@ -72,21 +74,21 @@ runs:
 
         # Initialize connection tracking
         LAST_CONNECTION_TIME=$(date +%s)
-        POLL_INTERVAL=30
+        POLL_INTERVAL=15 # 15 seconds
         TIMEOUT=300 # 5 minutes expressed in seconds
 
         # Monitor the SSH connection
         while : ; do
           CURRENT_TIME=$(date +%s)
           CONNECTIONS=$(curl --silent http://127.0.0.1:4040/api/tunnels | jq '.tunnels[0].metrics.conns.gauge')
-          if [[ "$CONNECTIONS" -gt 0 ]]; then
+          if [ "$CONNECTIONS" -gt 0 ]; then
             echo "SSH connection detected. Resetting timeout."
             echo "Connect via SSH using the following URL: $NGROK_URL"
             LAST_CONNECTION_TIME=$(date +%s) # Reset last connection time
           fi
 
           # Check if the timeout has been reached
-          if [[ $((CURRENT_TIME - LAST_CONNECTION_TIME)) -ge $TIMEOUT ]]; then
+          if [ $((CURRENT_TIME - LAST_CONNECTION_TIME)) -ge $TIMEOUT ]; then
             echo "No SSH connections detected within the last 5 minutes. Terminating."
             exit 1
           fi
