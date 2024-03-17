@@ -29,7 +29,7 @@ fs.appendFileSync(path.join(sshPath, "config"), "Host *\nStrictHostKeyChecking n
 core.info('\n====================================');
 core.info('Add authorized keys');
 core.info('====================================');
-const allowedUsers = core.getInput('allowed-github-users').split(',');
+const allowedUsers = core.getInput('allowed-github-users')?.split(',') || [];
 if (core.getInput('allow-pr-owner')) allowedUsers.push(core.getInput('allow-pr-owner'));
 const uniqueAllowedUsers = [...new Set(allowedUsers)]
 if (!uniqueAllowedUsers.length) {

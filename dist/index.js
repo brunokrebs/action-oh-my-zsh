@@ -30106,7 +30106,7 @@ __nccwpck_require__.r(__webpack_exports__);
 /* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__nccwpck_require__.n(_actions_exec__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _octokit_auth_action__WEBPACK_IMPORTED_MODULE_7__ = __nccwpck_require__(9205);
 /* harmony import */ var _get_tunnels__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(1385);
-var _a;
+var _a, _b;
 
 
 
@@ -30135,7 +30135,7 @@ fs__WEBPACK_IMPORTED_MODULE_1__.appendFileSync(path__WEBPACK_IMPORTED_MODULE_2__
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Add authorized keys');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
-const allowedUsers = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('allowed-github-users').split(',');
+const allowedUsers = ((_a = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('allowed-github-users')) === null || _a === void 0 ? void 0 : _a.split(',')) || [];
 if (_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('allow-pr-owner'))
     allowedUsers.push(_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('allow-pr-owner'));
 const uniqueAllowedUsers = [...new Set(allowedUsers)];
@@ -30192,7 +30192,7 @@ _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n=============================
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Get Ngrok URL');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 const tunnelsResponse = await (0,_get_tunnels__WEBPACK_IMPORTED_MODULE_5__/* .getTunnelsWithTimeout */ .R)();
-const url = (_a = tunnelsResponse.tunnels[0]) === null || _a === void 0 ? void 0 : _a.public_url;
+const url = (_b = tunnelsResponse.tunnels[0]) === null || _b === void 0 ? void 0 : _b.public_url;
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Ngrok URL: ${url}`);
 
 __webpack_async_result__();
