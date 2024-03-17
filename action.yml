@@ -101,8 +101,8 @@ runs:
 
           # if no connections print time elapsed since last connection
           if [ "$CONNECTIONS" -eq 0 ]; then
-            echo "\nNo SSH connections detected in the last $((CURRENT_TIME - LAST_CONNECTION_TIME)) seconds."
-            echo "runner's password is: $PASSWORD"
+            echo ""
+            echo "No SSH connections detected in the last $((CURRENT_TIME - LAST_CONNECTION_TIME)) seconds."
             echo "Connect via SSH using the following command:"
             # output ssh command on the `ssh runner@2.tcp.ngrok.io -p 13522` pattern
             echo "ssh runner@$(echo $NGROK_URL | awk -F'://' '{print $2}' | awk -F':' '{print $1}') -p $(echo $NGROK_URL | awk -F':' '{print $NF}')"
