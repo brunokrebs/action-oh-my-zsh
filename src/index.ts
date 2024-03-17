@@ -1,7 +1,9 @@
 import * as core from '@actions/core';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as os from 'os';
 // import github from '@actions/github';
 import { exec } from '@actions/exec';
-import { nanoid } from 'nanoid'
 import { getTunnelsWithTimeout } from './get-tunnels';
 
 core.info('\n====================================');
@@ -16,11 +18,17 @@ await exec(`echo "PasswordAuthentication yes" | sudo tee -a /etc/ssh/sshd_config
 await exec('sudo service ssh start');
 
 core.info('\n====================================');
-core.info('Generate random password and set as runner password');
+core.info('Configure ssh');
 core.info('====================================');
-// const password = nanoid();
-await exec(`echo "runner:brunooo" | sudo chpasswd`);
-core.info(`Runner password: brunooo`);
+await exec('sudo -u runner mkdir -p /home/runner/.ssh');
+const sshPath = path.join(os.homedir(), ".ssh");
+fs.appendFileSync(path.join(sshPath, "config"), "Host *\nStrictHostKeyChecking no\nCheckHostIP no\n" +
+      "TCPKeepAlive yes\nServerAliveInterval 30\nServerAliveCountMax 180\nVerifyHostKeyDNS yes\nUpdateHostKeys yes\n")
+const authorizedKeysPath = path.join(sshPath, "authorized_keys")
+const allowedKeys = [];
+allowedKeys.push('ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA5d394VrHgy/1gxJOMfwAEE/Kgq2oCnFcYMDScqVOdg bruno@mimic.com');
+allowedKeys.push('ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBWH6PAr+9Dx65JR6BLeGoU762FcrUktYpFCphBQ/ted krebs.bruno@gmail.com');
+fs.appendFileSync(authorizedKeysPath, allowedKeys.join('\n'))
 
 core.info('\n====================================');
 core.info('Install oh-my-zsh and set ZSH as default shell for runner');

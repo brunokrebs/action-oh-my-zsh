@@ -21,10 +21,10 @@
     "@actions/core": "^1.10.1",
     "@actions/exec": "^1.1.1",
     "@actions/github": "^6.0.0",
-    "@actions/http-client": "^2.2.1",
-    "nanoid": "^5.0.6"
+    "@actions/http-client": "^2.2.1"
   },
   "devDependencies": {
+    "@types/node": "^20.11.28",
     "@vercel/ncc": "^0.38.1",
     "typescript": "^5.4.2"
   }
