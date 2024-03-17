@@ -57,19 +57,37 @@ runs:
       run: |
         echo "source /home/runner/env_setup.sh" | sudo tee -a /home/runner/.zshrc
 
-    - name: Start Ngrok
+    - name: Start Ngrok and monitor it for SSH connections
       shell: sh
-      env:
-        NGROK_AUTH_TOKEN: ${{ inputs.ngrok-auth-token }}
       run: |
+        # Start ngrok and keep it running
         ngrok authtoken $NGROK_AUTH_TOKEN
-        ngrok tcp 22 --log=stdout > ngrok.log &
-        sleep 10
-        cat ngrok.log
-        echo "Ngrok tunnel setup complete."
+        ./ngrok tcp 22 &
 
-    - name: Keep runner alive
-      shell: sh
-      run: |
-        echo "SSH server is running, and ngrok tunnel is set up. Check the ngrok log output for the tunnel address."
-        tail -f /dev/null
+        # Get the public URL
+        NGROK_URL=$(curl --silent --max-time 10 http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
+        echo "Connect via SSH using the following URL: $NGROK_URL"
+
+        # Initialize connection tracking
+        LAST_CONNECTION_TIME=$(date +%s)
+        POLL_INTERVAL=30
+        TIMEOUT=300 # 5 minutes expressed in seconds
+
+        # Monitor the SSH connection
+        while : ; do
+          CURRENT_TIME=$(date +%s)
+          CONNECTIONS=$(curl --silent http://127.0.0.1:4040/api/tunnels | jq '.tunnels[0].metrics.conns.gauge')
+          if [[ "$CONNECTIONS" -gt 0 ]]; then
+            echo "SSH connection detected. Resetting timeout."
+            echo "Connect via SSH using the following URL: $NGROK_URL"
+            LAST_CONNECTION_TIME=$(date +%s) # Reset last connection time
+          fi
+
+          # Check if the timeout has been reached
+          if [[ $((CURRENT_TIME - LAST_CONNECTION_TIME)) -ge $TIMEOUT ]]; then
+            echo "No SSH connections detected within the last 5 minutes. Terminating."
+            exit 1
+          fi
+
+          sleep $POLL_INTERVAL
+        done
