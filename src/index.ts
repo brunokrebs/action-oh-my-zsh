@@ -45,7 +45,7 @@ core.info('Start Ngrok')
 core.info('====================================');
 const ngrokToken = core.getInput('ngrok-auth-token');
 await exec(`ngrok authtoken ${ngrokToken}`);
-await exec('ngrok', ['tcp', '22', '&']);
+await exec('ngrok tcp 22 > /dev/null &');
 await exec('sleep 10');
 
 core.info('\n====================================');
