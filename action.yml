@@ -6,20 +6,24 @@ branding:
   icon: 'terminal'
 
 inputs:
+  GITHUB_TOKEN:
+    description: GitHub Token
+    default: ${{ github.token }}
+    required: false
   ngrok-auth-token:
     description: 'The Ngrok Auth Token'
     required: true
   ssh-timeout:
     description: 'The SSH timeout in seconds'
     required: false
-    default: "300"
+    default: '300'
   allowed-github-users:
     description: 'The list of allowed GitHub users that will have their public keys added to the authorized_keys file'
     required: false
   allow-pr-owner:
     description: 'Explictly allow the PR owner to connect via SSH'
     required: false
-    default: "false"
+    default: 'false'
 
 runs:
   using: 'node20'
