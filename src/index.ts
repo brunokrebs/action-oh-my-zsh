@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import { Octokit } from '@octokit/rest';
+import * as github from '@actions/github';
 import { exec } from '@actions/exec';
 import  { createActionAuth } from '@octokit/auth-action';
 import { getTunnelsWithTimeout } from './get-tunnels';
@@ -29,8 +30,10 @@ fs.appendFileSync(path.join(sshPath, "config"), "Host *\nStrictHostKeyChecking n
 core.info('\n====================================');
 core.info('Add authorized keys');
 core.info('====================================');
-const allowedUsers = core.getInput('allowed-github-users')?.split(',') || [];
-if (core.getInput('allow-pr-owner')) allowedUsers.push(core.getInput('allow-pr-owner'));
+const allowedUsers = core.getInput('allowed-github-users') ? core.getInput('allowed-github-users').split(',') : [];
+if (core.getInput('allow-pr-owner') === 'true') {
+  allowedUsers.push(github.context.actor);
+}
 const uniqueAllowedUsers = [...new Set(allowedUsers)]
 if (!uniqueAllowedUsers.length) {
   core.setFailed('No allowed users');
@@ -57,9 +60,6 @@ for (const allowedUser of uniqueAllowedUsers) {
   }
 }
 const authorizedKeysPath = path.join(sshPath, "authorized_keys");
-
-// allowedKeys.push('ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA5d394VrHgy/1gxJOMfwAEE/Kgq2oCnFcYMDScqVOdg bruno@mimic.com');
-// allowedKeys.push('ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBWH6PAr+9Dx65JR6BLeGoU762FcrUktYpFCphBQ/ted krebs.bruno@gmail.com');
 
 core.info(`Allowed keys: ${allowedKeys.join(',')}`);
 fs.appendFileSync(authorizedKeysPath, allowedKeys.join('\n'));

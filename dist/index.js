@@ -1729,6 +1729,259 @@ class ExecState extends events.EventEmitter {
 
 /***/ }),
 
+/***/ 4087:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Context = void 0;
+const fs_1 = __nccwpck_require__(7147);
+const os_1 = __nccwpck_require__(2037);
+class Context {
+    /**
+     * Hydrate the context from the environment
+     */
+    constructor() {
+        var _a, _b, _c;
+        this.payload = {};
+        if (process.env.GITHUB_EVENT_PATH) {
+            if ((0, fs_1.existsSync)(process.env.GITHUB_EVENT_PATH)) {
+                this.payload = JSON.parse((0, fs_1.readFileSync)(process.env.GITHUB_EVENT_PATH, { encoding: 'utf8' }));
+            }
+            else {
+                const path = process.env.GITHUB_EVENT_PATH;
+                process.stdout.write(`GITHUB_EVENT_PATH ${path} does not exist${os_1.EOL}`);
+            }
+        }
+        this.eventName = process.env.GITHUB_EVENT_NAME;
+        this.sha = process.env.GITHUB_SHA;
+        this.ref = process.env.GITHUB_REF;
+        this.workflow = process.env.GITHUB_WORKFLOW;
+        this.action = process.env.GITHUB_ACTION;
+        this.actor = process.env.GITHUB_ACTOR;
+        this.job = process.env.GITHUB_JOB;
+        this.runNumber = parseInt(process.env.GITHUB_RUN_NUMBER, 10);
+        this.runId = parseInt(process.env.GITHUB_RUN_ID, 10);
+        this.apiUrl = (_a = process.env.GITHUB_API_URL) !== null && _a !== void 0 ? _a : `https://api.github.com`;
+        this.serverUrl = (_b = process.env.GITHUB_SERVER_URL) !== null && _b !== void 0 ? _b : `https://github.com`;
+        this.graphqlUrl =
+            (_c = process.env.GITHUB_GRAPHQL_URL) !== null && _c !== void 0 ? _c : `https://api.github.com/graphql`;
+    }
+    get issue() {
+        const payload = this.payload;
+        return Object.assign(Object.assign({}, this.repo), { number: (payload.issue || payload.pull_request || payload).number });
+    }
+    get repo() {
+        if (process.env.GITHUB_REPOSITORY) {
+            const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+            return { owner, repo };
+        }
+        if (this.payload.repository) {
+            return {
+                owner: this.payload.repository.owner.login,
+                repo: this.payload.repository.name
+            };
+        }
+        throw new Error("context.repo requires a GITHUB_REPOSITORY environment variable like 'owner/repo'");
+    }
+}
+exports.Context = Context;
+//# sourceMappingURL=context.js.map
+
+/***/ }),
+
+/***/ 5438:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getOctokit = exports.context = void 0;
+const Context = __importStar(__nccwpck_require__(4087));
+const utils_1 = __nccwpck_require__(3030);
+exports.context = new Context.Context();
+/**
+ * Returns a hydrated octokit ready to use for GitHub Actions
+ *
+ * @param     token    the repo PAT or GITHUB_TOKEN
+ * @param     options  other options to set
+ */
+function getOctokit(token, options, ...additionalPlugins) {
+    const GitHubWithPlugins = utils_1.GitHub.plugin(...additionalPlugins);
+    return new GitHubWithPlugins((0, utils_1.getOctokitOptions)(token, options));
+}
+exports.getOctokit = getOctokit;
+//# sourceMappingURL=github.js.map
+
+/***/ }),
+
+/***/ 7914:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getApiBaseUrl = exports.getProxyFetch = exports.getProxyAgentDispatcher = exports.getProxyAgent = exports.getAuthString = void 0;
+const httpClient = __importStar(__nccwpck_require__(6255));
+const undici_1 = __nccwpck_require__(1773);
+function getAuthString(token, options) {
+    if (!token && !options.auth) {
+        throw new Error('Parameter token or opts.auth is required');
+    }
+    else if (token && options.auth) {
+        throw new Error('Parameters token and opts.auth may not both be specified');
+    }
+    return typeof options.auth === 'string' ? options.auth : `token ${token}`;
+}
+exports.getAuthString = getAuthString;
+function getProxyAgent(destinationUrl) {
+    const hc = new httpClient.HttpClient();
+    return hc.getAgent(destinationUrl);
+}
+exports.getProxyAgent = getProxyAgent;
+function getProxyAgentDispatcher(destinationUrl) {
+    const hc = new httpClient.HttpClient();
+    return hc.getAgentDispatcher(destinationUrl);
+}
+exports.getProxyAgentDispatcher = getProxyAgentDispatcher;
+function getProxyFetch(destinationUrl) {
+    const httpDispatcher = getProxyAgentDispatcher(destinationUrl);
+    const proxyFetch = (url, opts) => __awaiter(this, void 0, void 0, function* () {
+        return (0, undici_1.fetch)(url, Object.assign(Object.assign({}, opts), { dispatcher: httpDispatcher }));
+    });
+    return proxyFetch;
+}
+exports.getProxyFetch = getProxyFetch;
+function getApiBaseUrl() {
+    return process.env['GITHUB_API_URL'] || 'https://api.github.com';
+}
+exports.getApiBaseUrl = getApiBaseUrl;
+//# sourceMappingURL=utils.js.map
+
+/***/ }),
+
+/***/ 3030:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getOctokitOptions = exports.GitHub = exports.defaults = exports.context = void 0;
+const Context = __importStar(__nccwpck_require__(4087));
+const Utils = __importStar(__nccwpck_require__(7914));
+// octokit + plugins
+const core_1 = __nccwpck_require__(6762);
+const plugin_rest_endpoint_methods_1 = __nccwpck_require__(3044);
+const plugin_paginate_rest_1 = __nccwpck_require__(4193);
+exports.context = new Context.Context();
+const baseUrl = Utils.getApiBaseUrl();
+exports.defaults = {
+    baseUrl,
+    request: {
+        agent: Utils.getProxyAgent(baseUrl),
+        fetch: Utils.getProxyFetch(baseUrl)
+    }
+};
+exports.GitHub = core_1.Octokit.plugin(plugin_rest_endpoint_methods_1.restEndpointMethods, plugin_paginate_rest_1.paginateRest).defaults(exports.defaults);
+/**
+ * Convience function to correctly format Octokit Options to pass into the constructor.
+ *
+ * @param     token    the repo PAT or GITHUB_TOKEN
+ * @param     options  other options to set
+ */
+function getOctokitOptions(token, options) {
+    const opts = Object.assign({}, options || {}); // Shallow clone - don't mutate the object provided by the caller
+    // Auth
+    const auth = Utils.getAuthString(token, opts);
+    if (auth) {
+        opts.auth = auth;
+    }
+    return opts;
+}
+exports.getOctokitOptions = getOctokitOptions;
+//# sourceMappingURL=utils.js.map
+
+/***/ }),
+
 /***/ 5526:
 /***/ (function(__unused_webpack_module, exports) {
 
@@ -30100,13 +30353,16 @@ __nccwpck_require__.r(__webpack_exports__);
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(path__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var os__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(2037);
 /* harmony import */ var os__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__nccwpck_require__.n(os__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _octokit_rest__WEBPACK_IMPORTED_MODULE_6__ = __nccwpck_require__(5375);
-/* harmony import */ var _octokit_rest__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__nccwpck_require__.n(_octokit_rest__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(1514);
-/* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__nccwpck_require__.n(_actions_exec__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _octokit_auth_action__WEBPACK_IMPORTED_MODULE_7__ = __nccwpck_require__(9205);
-/* harmony import */ var _get_tunnels__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(1385);
-var _a, _b;
+/* harmony import */ var _octokit_rest__WEBPACK_IMPORTED_MODULE_7__ = __nccwpck_require__(5375);
+/* harmony import */ var _octokit_rest__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__nccwpck_require__.n(_octokit_rest__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(5438);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(1514);
+/* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__nccwpck_require__.n(_actions_exec__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _octokit_auth_action__WEBPACK_IMPORTED_MODULE_8__ = __nccwpck_require__(9205);
+/* harmony import */ var _get_tunnels__WEBPACK_IMPORTED_MODULE_6__ = __nccwpck_require__(1385);
+var _a;
+
 
 
 
@@ -30118,34 +30374,35 @@ var _a, _b;
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Install openssh-server and zsh');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_4__.exec)('sudo apt-get update');
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_4__.exec)('sudo apt-get install -y openssh-server zsh');
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_4__.exec)('wget -q https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz');
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_4__.exec)('tar -xvzf ngrok-v3-stable-linux-amd64.tgz');
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_4__.exec)('sudo mv ngrok /usr/local/bin/');
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_4__.exec)(`echo "PasswordAuthentication yes" | sudo tee -a /etc/ssh/sshd_config`);
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_4__.exec)('sudo service ssh start');
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('sudo apt-get update');
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('sudo apt-get install -y openssh-server zsh');
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('wget -q https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz');
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('tar -xvzf ngrok-v3-stable-linux-amd64.tgz');
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('sudo mv ngrok /usr/local/bin/');
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)(`echo "PasswordAuthentication yes" | sudo tee -a /etc/ssh/sshd_config`);
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('sudo service ssh start');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Configure ssh');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_4__.exec)('sudo -u runner mkdir -p /home/runner/.ssh');
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('sudo -u runner mkdir -p /home/runner/.ssh');
 const sshPath = path__WEBPACK_IMPORTED_MODULE_2__.join(os__WEBPACK_IMPORTED_MODULE_3__.homedir(), ".ssh");
 fs__WEBPACK_IMPORTED_MODULE_1__.appendFileSync(path__WEBPACK_IMPORTED_MODULE_2__.join(sshPath, "config"), "Host *\nStrictHostKeyChecking no\nCheckHostIP no\n" +
     "TCPKeepAlive yes\nServerAliveInterval 30\nServerAliveCountMax 180\nVerifyHostKeyDNS yes\nUpdateHostKeys yes\n");
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Add authorized keys');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
-const allowedUsers = ((_a = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('allowed-github-users')) === null || _a === void 0 ? void 0 : _a.split(',')) || [];
-if (_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('allow-pr-owner'))
-    allowedUsers.push(_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('allow-pr-owner'));
+const allowedUsers = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('allowed-github-users') ? _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('allowed-github-users').split(',') : [];
+if (_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('allow-pr-owner') === 'true') {
+    allowedUsers.push(_actions_github__WEBPACK_IMPORTED_MODULE_4__.context.actor);
+}
 const uniqueAllowedUsers = [...new Set(allowedUsers)];
 if (!uniqueAllowedUsers.length) {
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed('No allowed users');
     process.exit(1);
 }
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Allowed users: ${uniqueAllowedUsers.join(',')}`);
-const octokit = new _octokit_rest__WEBPACK_IMPORTED_MODULE_6__.Octokit({
-    authStrategy: _octokit_auth_action__WEBPACK_IMPORTED_MODULE_7__/* .createActionAuth */ .C
+const octokit = new _octokit_rest__WEBPACK_IMPORTED_MODULE_7__.Octokit({
+    authStrategy: _octokit_auth_action__WEBPACK_IMPORTED_MODULE_8__/* .createActionAuth */ .C
 });
 const allowedKeys = [];
 for (const allowedUser of uniqueAllowedUsers) {
@@ -30164,21 +30421,19 @@ for (const allowedUser of uniqueAllowedUsers) {
     }
 }
 const authorizedKeysPath = path__WEBPACK_IMPORTED_MODULE_2__.join(sshPath, "authorized_keys");
-// allowedKeys.push('ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA5d394VrHgy/1gxJOMfwAEE/Kgq2oCnFcYMDScqVOdg bruno@mimic.com');
-// allowedKeys.push('ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBWH6PAr+9Dx65JR6BLeGoU762FcrUktYpFCphBQ/ted krebs.bruno@gmail.com');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Allowed keys: ${allowedKeys.join(',')}`);
 fs__WEBPACK_IMPORTED_MODULE_1__.appendFileSync(authorizedKeysPath, allowedKeys.join('\n'));
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Install oh-my-zsh and set ZSH as default shell for runner');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_4__.exec)('sudo -u runner sh -c "cd /home/runner && curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh"');
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_4__.exec)('sudo chsh -s /bin/zsh runner');
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('sudo -u runner sh -c "cd /home/runner && curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh"');
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('sudo chsh -s /bin/zsh runner');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Fix compinit issues');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_4__.exec)('wget -q https://raw.githubusercontent.com/brunokrebs/action-oh-my-zsh/main/bin/fix-compinit.sh');
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_4__.exec)('chmod +x fix-compinit.sh');
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_4__.exec)('./fix-compinit.sh');
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('wget -q https://raw.githubusercontent.com/brunokrebs/action-oh-my-zsh/main/bin/fix-compinit.sh');
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('chmod +x fix-compinit.sh');
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('./fix-compinit.sh');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Append env_setup.sh to .zshrc');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
@@ -30187,14 +30442,14 @@ _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n=============================
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Start Ngrok');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 const ngrokToken = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('ngrok-auth-token');
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_4__.exec)(`ngrok authtoken ${ngrokToken}`);
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_4__.exec)('/bin/bash', ['-c', 'ngrok tcp 22 &']);
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_4__.exec)('sleep 10');
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)(`ngrok authtoken ${ngrokToken}`);
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('/bin/bash', ['-c', 'ngrok tcp 22 &']);
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_5__.exec)('sleep 10');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Get Ngrok URL');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
-const tunnelsResponse = await (0,_get_tunnels__WEBPACK_IMPORTED_MODULE_5__/* .getTunnelsWithTimeout */ .R)();
-const url = (_b = tunnelsResponse.tunnels[0]) === null || _b === void 0 ? void 0 : _b.public_url;
+const tunnelsResponse = await (0,_get_tunnels__WEBPACK_IMPORTED_MODULE_6__/* .getTunnelsWithTimeout */ .R)();
+const url = (_a = tunnelsResponse.tunnels[0]) === null || _a === void 0 ? void 0 : _a.public_url;
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Ngrok URL: ${url}`);
 
 __webpack_async_result__();
