@@ -25972,6 +25972,7 @@ __nccwpck_require__.r(__webpack_exports__);
 /* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_exec__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(7852);
 /* harmony import */ var _get_tunnels__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(1385);
+var _a;
 
 // import github from '@actions/github';
 
@@ -26019,8 +26020,8 @@ _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n=============================
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Get Ngrok URL');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
 const tunnels = await (0,_get_tunnels__WEBPACK_IMPORTED_MODULE_2__/* .getTunnelsWithTimeout */ .R)();
-// const url = tunnels[0].public_url;
-_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Ngrok URL: ${tunnels}`);
+const url = (_a = tunnels[0]) === null || _a === void 0 ? void 0 : _a.public_url;
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Ngrok URL: ${JSON.stringify(tunnels)}`);
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } }, 1);

@@ -52,5 +52,5 @@ core.info('\n====================================');
 core.info('Get Ngrok URL')
 core.info('====================================');
 const tunnels = await getTunnelsWithTimeout();
-// const url = tunnels[0].public_url;
-core.info(`Ngrok URL: ${tunnels}`);
+const url = tunnels[0]?.public_url;
+core.info(`Ngrok URL: ${JSON.stringify(tunnels)}`);
