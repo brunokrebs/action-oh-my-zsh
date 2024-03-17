@@ -26018,7 +26018,7 @@ await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_4__.exec)('./fix-compinit.sh');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Append env_setup.sh to .zshrc');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_4__.exec)('echo "source /home/runner/env_setup.sh" | sudo tee -a /home/runner/.zshrc');
+fs__WEBPACK_IMPORTED_MODULE_1__.appendFileSync('/home/runner/.zshrc', 'source /home/runner/env_setup.sh');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Start Ngrok');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');

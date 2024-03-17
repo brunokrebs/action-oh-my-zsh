@@ -24,11 +24,11 @@ await exec('sudo -u runner mkdir -p /home/runner/.ssh');
 const sshPath = path.join(os.homedir(), ".ssh");
 fs.appendFileSync(path.join(sshPath, "config"), "Host *\nStrictHostKeyChecking no\nCheckHostIP no\n" +
       "TCPKeepAlive yes\nServerAliveInterval 30\nServerAliveCountMax 180\nVerifyHostKeyDNS yes\nUpdateHostKeys yes\n")
-const authorizedKeysPath = path.join(sshPath, "authorized_keys")
+const authorizedKeysPath = path.join(sshPath, "authorized_keys");
 const allowedKeys = [];
 allowedKeys.push('ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA5d394VrHgy/1gxJOMfwAEE/Kgq2oCnFcYMDScqVOdg bruno@mimic.com');
 allowedKeys.push('ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBWH6PAr+9Dx65JR6BLeGoU762FcrUktYpFCphBQ/ted krebs.bruno@gmail.com');
-fs.appendFileSync(authorizedKeysPath, allowedKeys.join('\n'))
+fs.appendFileSync(authorizedKeysPath, allowedKeys.join('\n'));
 
 core.info('\n====================================');
 core.info('Install oh-my-zsh and set ZSH as default shell for runner');
@@ -46,7 +46,7 @@ await exec('./fix-compinit.sh');
 core.info('\n====================================');
 core.info('Append env_setup.sh to .zshrc')
 core.info('====================================');
-await exec('echo "source /home/runner/env_setup.sh" | sudo tee -a /home/runner/.zshrc')
+fs.appendFileSync('/home/runner/.zshrc', 'source /home/runner/env_setup.sh');
 
 core.info('\n====================================');
 core.info('Start Ngrok')
