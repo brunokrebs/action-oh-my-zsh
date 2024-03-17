@@ -52,6 +52,11 @@ runs:
         sudo xargs -a /tmp/compaudit_list.txt chmod g-w
         sudo xargs -a /tmp/compaudit_list.txt chmod a-w
 
+    - name: Append env_setup.sh to .zshrc
+      shell: sh
+      run: |
+        echo "source /home/runner/env_setup.sh" | sudo tee -a /home/runner/.zshrc
+
     - name: Start Ngrok
       shell: sh
       env:
