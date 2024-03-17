@@ -14,8 +14,8 @@ await exec('sudo apt-get install -y openssh-server zsh');
 await exec('wget -q https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz');
 await exec('tar -xvzf ngrok-v3-stable-linux-amd64.tgz');
 await exec('sudo mv ngrok /usr/local/bin/');
-await exec(`sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config`);
-await exec(`sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config`);
+await exec(`sudo sed -i "s/#PasswordAuthentication yes/PasswordAuthentication yes/" /etc/ssh/sshd_config`);
+await exec(`sudo sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/" /etc/ssh/sshd_config`);
 await exec('sudo service ssh start');
 
 core.info('====================================');
