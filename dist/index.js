@@ -25998,7 +25998,9 @@ await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('sudo chsh -s /bin/zsh
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Fix compinit issues');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
-await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('../bin/fix-compinit.sh');
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('wget -q https://raw.githubusercontent.com/brunokrebs/action-oh-my-zsh/main/bin/fix-compinit.sh');
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('chmod +x fix-compinit.sh');
+await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('./fix-compinit.sh');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Append env_setup.sh to .zshrc');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');

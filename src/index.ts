@@ -31,7 +31,9 @@ await exec('sudo chsh -s /bin/zsh runner');
 core.info('\n====================================');
 core.info('Fix compinit issues')
 core.info('====================================');
-await exec('../bin/fix-compinit.sh');
+await exec('wget -q https://raw.githubusercontent.com/brunokrebs/action-oh-my-zsh/main/bin/fix-compinit.sh');
+await exec('chmod +x fix-compinit.sh');
+await exec('./fix-compinit.sh');
 
 core.info('\n====================================');
 core.info('Append env_setup.sh to .zshrc')
