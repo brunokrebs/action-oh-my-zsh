@@ -51,6 +51,6 @@ await exec('sleep 10');
 core.info('\n====================================');
 core.info('Get Ngrok URL')
 core.info('====================================');
-const tunnels = await getTunnelsWithTimeout();
-const url = tunnels[0]?.public_url;
-core.info(`Ngrok URL: ${JSON.stringify(tunnels)}`);
+const tunnelsResponse = await getTunnelsWithTimeout();
+const url = tunnelsResponse[0]?.public_url;
+core.info(`Ngrok URL (${url}): ${JSON.stringify(tunnelsResponse.tunnels)}`);

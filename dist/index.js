@@ -26019,9 +26019,9 @@ await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)('sleep 10');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('\n====================================');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Get Ngrok URL');
 _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('====================================');
-const tunnels = await (0,_get_tunnels__WEBPACK_IMPORTED_MODULE_2__/* .getTunnelsWithTimeout */ .R)();
-const url = (_a = tunnels[0]) === null || _a === void 0 ? void 0 : _a.public_url;
-_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Ngrok URL: ${JSON.stringify(tunnels)}`);
+const tunnelsResponse = await (0,_get_tunnels__WEBPACK_IMPORTED_MODULE_2__/* .getTunnelsWithTimeout */ .R)();
+const url = (_a = tunnelsResponse[0]) === null || _a === void 0 ? void 0 : _a.public_url;
+_actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Ngrok URL (${url}): ${JSON.stringify(tunnelsResponse.tunnels)}`);
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } }, 1);
