@@ -2,8 +2,9 @@ import * as core from '@actions/core';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
-// import github from '@actions/github';
+import { Octokit } from '@octokit/rest';
 import { exec } from '@actions/exec';
+import  { createActionAuth } from '@octokit/auth-action';
 import { getTunnelsWithTimeout } from './get-tunnels';
 
 core.info('\n====================================');
@@ -24,10 +25,41 @@ await exec('sudo -u runner mkdir -p /home/runner/.ssh');
 const sshPath = path.join(os.homedir(), ".ssh");
 fs.appendFileSync(path.join(sshPath, "config"), "Host *\nStrictHostKeyChecking no\nCheckHostIP no\n" +
       "TCPKeepAlive yes\nServerAliveInterval 30\nServerAliveCountMax 180\nVerifyHostKeyDNS yes\nUpdateHostKeys yes\n")
-const authorizedKeysPath = path.join(sshPath, "authorized_keys");
+
+core.info('\n====================================');
+core.info('Add authorized keys');
+core.info('====================================');
+const allowedUsers = core.getInput('allowed-github-users').split(',');
+if (core.getInput('allow-pr-owner')) allowedUsers.push(core.getInput('allow-pr-owner'));
+const uniqueAllowedUsers = [...new Set(allowedUsers)]
+if (!uniqueAllowedUsers.length) {
+  core.setFailed('No allowed users');
+  process.exit(1);
+}
+
+const octokit = new Octokit({
+  authStrategy: createActionAuth
+});
 const allowedKeys = [];
-allowedKeys.push('ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA5d394VrHgy/1gxJOMfwAEE/Kgq2oCnFcYMDScqVOdg bruno@mimic.com');
-allowedKeys.push('ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBWH6PAr+9Dx65JR6BLeGoU762FcrUktYpFCphBQ/ted krebs.bruno@gmail.com');
+for (const allowedUser of uniqueAllowedUsers) {
+  if (allowedUser) {
+    try {
+      let keys = await octokit.users.listPublicKeysForUser({
+        username: allowedUser
+      });
+      for (const item of keys.data) {
+        allowedKeys.push(item.key);
+      }
+    } catch (error) {
+      core.info(`Error fetching keys for ${allowedUser}. Error: ${error.message}`);
+    }
+  }
+}
+const authorizedKeysPath = path.join(sshPath, "authorized_keys");
+
+// allowedKeys.push('ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA5d394VrHgy/1gxJOMfwAEE/Kgq2oCnFcYMDScqVOdg bruno@mimic.com');
+// allowedKeys.push('ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBWH6PAr+9Dx65JR6BLeGoU762FcrUktYpFCphBQ/ted krebs.bruno@gmail.com');
+
 fs.appendFileSync(authorizedKeysPath, allowedKeys.join('\n'));
 
 core.info('\n====================================');
