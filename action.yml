@@ -36,6 +36,11 @@ runs:
       run: |
         sudo -u runner sh -c "cd /home/runner && curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh"
 
+    - name: Set zsh as the default shell
+      shell: sh
+      run: |
+        sudo chsh -s /bin/zsh runner
+
     - name: Generate compaudit list
       shell: sh
       run: |
