@@ -4,6 +4,7 @@ description: 'Debug your GitHub Actions Environment interactively by using SSH a
 author: 'Bruno Krebs'
 branding:
   icon: 'terminal'
+  color: 'black'
 
 inputs:
   GITHUB_TOKEN:
